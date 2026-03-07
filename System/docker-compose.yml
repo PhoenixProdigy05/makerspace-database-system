@@ -1,0 +1,144 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: makerspace-postgres
+    environment:
+      POSTGRES_DB: makerspace_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./Database/Makerspace_DB_Schema.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - makerspace-network
+
+  # Spring Boot Backend
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: makerspace-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/makerspace_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      JWT_SECRET: your-secret-key-change-this-in-production-use-a-long-random-string
+      JWT_EXPIRATION: 86400000
+      SERVER_PORT: 8080
+      FILE_UPLOAD_DIR: /app/uploads
+    ports:
+      - "9090:8080"
+    volumes:
+      - backend_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - makerspace-network
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:9091/api
+    container_name: makerspace-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - makerspace-network
+
+  # Spring Boot Backend - Dev (bind mount + hot reload)
+  backend-dev:
+    image: maven:3.9-eclipse-temurin-17
+    container_name: makerspace-backend-dev
+    working_dir: /app
+    command: mvn spring-boot:run
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/makerspace_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
+      SPRING_FLYWAY_ENABLED: true
+      JWT_SECRET: your-secret-key-change-this-in-production-use-a-long-random-string
+      JWT_EXPIRATION: 86400000
+      SERVER_PORT: 8080
+      FILE_UPLOAD_DIR: /app/uploads
+      SPRING_DEVTOOLS_RESTART_ENABLED: 'true'
+    ports:
+      - "9091:8080"
+    volumes:
+      - ./Backend:/app
+      - backend_uploads:/app/uploads
+      - maven_cache:/root/.m2
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - makerspace-network
+
+  # Next.js Frontend - Dev (bind mount + hot reload)
+  frontend-dev:
+    image: node:20-alpine
+    container_name: makerspace-frontend-dev
+    working_dir: /app
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:9091/api
+      NODE_ENV: development
+      npm_config_cache: /tmp/.npm
+      NEXT_SKIP_TYPE_CHECK: true
+      NEXT_TELEMETRY_DISABLED: 1
+      NEXT_SWC_BINARY_PATH: /dev/null
+    command: >
+      sh -c "
+        echo 'Installing dependencies...' &&
+        npm install --no-audit --no-fund --legacy-peer-deps &&
+        echo 'Starting development server...' &&
+        npm run dev
+      "
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./Frontend:/app
+      - npm_cache:/tmp/.npm
+    depends_on:
+      backend-dev:
+        condition: service_started
+    networks:
+      - makerspace-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  backend_uploads:
+  maven_cache:
+  npm_cache:
+  node_modules:
+
+networks:
+  makerspace-network:
+    driver: bridge
+

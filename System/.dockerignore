@@ -1,0 +1,11 @@
+.git
+.gitignore
+.idea
+*.iml
+.vscode
+*.log
+.DS_Store
+node_modules
+.next
+target
+Documentation
