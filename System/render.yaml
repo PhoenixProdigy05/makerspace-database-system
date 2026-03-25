@@ -38,12 +38,6 @@ services:
       - key: FRONTEND_URL
         value: https://your-app.vercel.app
       - key: FILE_UPLOAD_DIR
-        value: /app/uploads
+        value: /tmp/uploads
       - key: SPRING_PROFILES_ACTIVE
         value: render
-        
-  # Disk Storage for File Uploads
-  - type: disk
-    name: makerspace-uploads
-    plan: free
-    mountPath: /app/uploads
