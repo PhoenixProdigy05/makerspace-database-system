@@ -37,6 +37,8 @@ A comprehensive management system for makerspaces, featuring booking management,
 
 ## 🚀 Quick Start
 
+### Option 1: Local Development with Docker
+
 1. **Clone and navigate to the project:**
    ```bash
    cd "Makerspace Database System"
@@ -53,15 +55,34 @@ A comprehensive management system for makerspaces, featuring booking management,
    - Swagger UI: http://localhost:8080/swagger-ui.html
    - PostgreSQL: localhost:5432
 
+### Option 2: Cloud Deployment (Recommended for Production)
+
+Deploy to production using Render (backend/database) and Vercel (frontend):
+
+📖 **See [Cloud Deployment Guide](System/CLOUD_DEPLOYMENT.md)** for detailed instructions
+
+**Quick Links:**
+- [Render Setup Guide](System/CLOUD_DEPLOYMENT.md#step-1-deploy-backend--database-to-render)
+- [Vercel Setup Guide](System/CLOUD_DEPLOYMENT.md#step-2-deploy-frontend-to-vercel)
+
 ## 📁 Project Structure
 
 ```
 Makerspace Database System/
 ├── System/
 │   ├── Backend/                 # Spring Boot application
+│   │   ├── src/main/resources/
+│   │   │   ├── application-render.properties  # Render configuration
+│   │   │   └── application-docker.properties  # Docker configuration
+│   │   └── Dockerfile          # Production Docker build
 │   ├── Frontend/               # Next.js application
+│   │   ├── .env.production     # Production environment variables
+│   │   ├── vercel.json         # Vercel deployment config
+│   │   └── Dockerfile          # Production Docker build
 │   ├── Database/               # Database schema and scripts
-│   ├── docker-compose.yml      # Docker orchestration
+│   ├── docker-compose.yml      # Docker orchestration (local dev)
+│   ├── render.yaml             # Render service definition
+│   ├── CLOUD_DEPLOYMENT.md     # Cloud deployment guide
 │   └── README-DOCKER.md        # Detailed Docker setup guide
 ├── Documentation/              # Project documentation
 └── Pictures/                   # Gallery images and assets
