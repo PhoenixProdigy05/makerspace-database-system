@@ -1,0 +1,49 @@
+services:
+  # PostgreSQL Database Service
+  - type: postgres
+    name: makerspace-db
+    plan: free
+    ipAllowList: []
+    postgresVersion: 15
+    databaseName: makerspace_db
+    
+  # Spring Boot Backend Service
+  - type: web
+    name: makerspace-backend
+    plan: free
+    env: docker
+    repo: https://github.com/your-username/makerspace-database-system.git
+    rootDir: System/Backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: makerspace-db
+          property: connectionString
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: makerspace-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: makerspace-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION
+        value: 86400000
+      - key: FRONTEND_URL
+        value: https://your-app.vercel.app
+      - key: FILE_UPLOAD_DIR
+        value: /app/uploads
+      - key: SPRING_PROFILES_ACTIVE
+        value: render
+        
+  # Disk Storage for File Uploads
+  - type: disk
+    name: makerspace-uploads
+    plan: free
+    mountPath: /app/uploads
