@@ -84,6 +84,8 @@ public class SecurityConfig {
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/api/contacts/**").permitAll()
+                .requestMatchers("/api/gallery/public").permitAll()
+                .requestMatchers("/api/gallery/**").authenticated()
                 .requestMatchers("/api/users/**").authenticated()
                 .requestMatchers("/api/inventory/**").authenticated()
                 .requestMatchers("/api/bookings/**").authenticated()

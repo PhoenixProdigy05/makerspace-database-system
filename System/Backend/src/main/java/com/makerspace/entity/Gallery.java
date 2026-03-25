@@ -30,8 +30,8 @@ public class Gallery {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false)
-    private String imageUrl;
+    @Column(name = "image_data", columnDefinition = "TEXT")
+    private String imageData; // Base64 encoded image data
 
     @Column(nullable = false)
     private Integer displayOrder;

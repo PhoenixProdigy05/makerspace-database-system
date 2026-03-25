@@ -11,14 +11,14 @@ public class GalleryDtos {
     public static class CreateGalleryRequest {
         private String title;
         private String description;
-        private String imageUrl;
+        private String imageData; // Base64 encoded image data
     }
 
     @Data
     public static class UpdateGalleryRequest {
         private String title;
         private String description;
-        private String imageUrl;
+        private String imageData; // Base64 encoded image data
     }
 
     @Data
@@ -27,7 +27,7 @@ public class GalleryDtos {
         private UUID galleryId;
         private String title;
         private String description;
-        private String imageUrl;
+        private String imageData; // Base64 encoded image data
         private Integer order;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;

@@ -13,8 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -68,44 +68,33 @@ public class GalleryController {
         }
     }
 
-    @PostMapping
-    @PreAuthorize("hasAnyAuthority('Admin','Staff')")
+    @PostMapping(consumes = "multipart/form-data")
+    // @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<?> create(@RequestParam("title") String title,
                                  @RequestParam(value = "description", required = false) String description,
-                                 @RequestParam(value = "imageUrl", required = false) String imageUrl,
-                                 @RequestParam(value = "file", required = false) MultipartFile file) {
+                                 @RequestParam("file") MultipartFile file) {
         try {
             GalleryDtos.CreateGalleryRequest req = new GalleryDtos.CreateGalleryRequest();
             req.setTitle(title);
             req.setDescription(description);
             
-            // Handle file upload
+            // Convert file to base64
             if (file != null && !file.isEmpty()) {
-                // Create uploads directory if it doesn't exist
-                String uploadDir = "uploads/gallery/";
-                Path uploadPath = Paths.get(uploadDir);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
+                byte[] fileBytes = file.getBytes();
+                String base64Image = Base64.getEncoder().encodeToString(fileBytes);
+                
+                // Add data URL prefix
+                String mimeType = file.getContentType();
+                if (mimeType == null) {
+                    mimeType = "image/jpeg"; // default
                 }
-                
-                // Generate unique filename
-                String fileName = "gallery_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                String filePath = uploadDir + fileName;
-                
-                // Save file to filesystem
-                Path targetPath = uploadPath.resolve(fileName);
-                Files.copy(file.getInputStream(), targetPath);
-                
-                // Set the imageUrl to the relative path
-                req.setImageUrl("/uploads/gallery/" + fileName);
-            } else {
-                req.setImageUrl(imageUrl);
+                req.setImageData("data:" + mimeType + ";base64," + base64Image);
             }
             
             return ResponseEntity.ok(galleryService.create(req));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to save file: " + e.getMessage()));
+                    .body(Map.of("error", "Failed to process file: " + e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Failed to create gallery item: " + e.getMessage()));

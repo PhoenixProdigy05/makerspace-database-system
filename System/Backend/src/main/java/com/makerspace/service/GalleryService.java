@@ -21,7 +21,7 @@ public class GalleryService {
                 .galleryId(g.getGalleryId())
                 .title(g.getTitle())
                 .description(g.getDescription())
-                .imageUrl(g.getImageUrl())
+                .imageData(g.getImageData())
                 .order(g.getDisplayOrder())
                 .createdAt(g.getCreatedAt())
                 .updatedAt(g.getUpdatedAt())
@@ -47,7 +47,7 @@ public class GalleryService {
         Gallery g = Gallery.builder()
                 .title(req.getTitle())
                 .description(req.getDescription())
-                .imageUrl(req.getImageUrl())
+                .imageData(req.getImageData())
                 .displayOrder(maxOrder + 1)
                 .build();
         
@@ -60,7 +60,7 @@ public class GalleryService {
         
         if (req.getTitle() != null) g.setTitle(req.getTitle());
         if (req.getDescription() != null) g.setDescription(req.getDescription());
-        if (req.getImageUrl() != null) g.setImageUrl(req.getImageUrl());
+        if (req.getImageData() != null) g.setImageData(req.getImageData());
         
         Gallery saved = galleryRepository.save(g);
         return toResponse(saved);
