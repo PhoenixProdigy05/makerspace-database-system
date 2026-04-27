@@ -1,4 +1,4 @@
-# Multi-stage build for Spring Boot backend
+# Multi-stage build for Spring Boot backend - Updated for Render deployment
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /app
 
