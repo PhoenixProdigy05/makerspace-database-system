@@ -19,10 +19,18 @@ services:
     healthCheckPath: /actuator/health
     autoDeploy: true
     envVars:
-      - key: DATABASE_URL
+      - key: DATABASE_HOST
         fromDatabase:
           name: makerspace-db
-          property: connectionString
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: makerspace-db
+          property: port
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: makerspace-db
+          property: database
       - key: DATABASE_USERNAME
         fromDatabase:
           name: makerspace-db
