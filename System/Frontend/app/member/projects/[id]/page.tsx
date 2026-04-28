@@ -315,11 +315,8 @@ export default function ProjectWorkspacePage() {
                   }}
                 />
                 <AttachmentList
-                  attachments={workspace.attachments}
-                  onAttachmentDelete={() => {
-                    // Refresh workspace data
-                    apiClient.getProjectWorkspace(bookingId).then(setWorkspace);
-                  }}
+                  ownerTable="project_workspace"
+                  ownerId={bookingId}
                 />
               </CardContent>
             </Card>
