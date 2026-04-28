@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, forwardRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText as GSAPSplitText } from 'gsap/SplitText';
@@ -23,7 +23,7 @@ interface SplitTextProps {
   showCallback?: boolean;
 }
 
-const SplitText = ({
+const SplitText = forwardRef<HTMLElement, SplitTextProps>(({
   text,
   className = '',
   delay = 50,
@@ -37,8 +37,9 @@ const SplitText = ({
   textAlign = 'center',
   tag = 'p',
   onLetterAnimationComplete
-}: SplitTextProps) => {
-  const ref = useRef<HTMLElement>(null);
+}: SplitTextProps, ref) => {
+  const internalRef = useRef<HTMLElement>(null);
+  const elementRef = (ref as React.RefObject<HTMLElement>) || internalRef;
   const animationCompletedRef = useRef(false);
   const onCompleteRef = useRef(onLetterAnimationComplete);
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -49,6 +50,7 @@ const SplitText = ({
   }, [onLetterAnimationComplete]);
 
   useEffect(() => {
+    if (!elementRef.current) return;
     if (document.fonts.status === 'loaded') {
       setFontsLoaded(true);
     } else {
@@ -60,10 +62,10 @@ const SplitText = ({
 
   useGSAP(
     () => {
-      if (!ref.current || !text || !fontsLoaded) return;
+      if (!elementRef.current || !text || !fontsLoaded) return;
       // Prevent re-animation if already completed
       if (animationCompletedRef.current) return;
-      const el = ref.current;
+      const el = elementRef.current;
 
       if ((el as any)._rbsplitInstance) {
         try {
@@ -158,7 +160,7 @@ const SplitText = ({
         rootMargin,
         fontsLoaded
       ],
-      scope: ref
+      scope: elementRef
     }
   );
 
@@ -177,55 +179,55 @@ const SplitText = ({
     
     if (Tag === 'h1') {
       return (
-        <h1 ref={ref} style={style} className={classes}>
+        <h1 ref={elementRef as any} style={style} className={classes}>
           {text}
         </h1>
       );
     } else if (Tag === 'h2') {
       return (
-        <h2 ref={ref} style={style} className={classes}>
+        <h2 ref={elementRef as any} style={style} className={classes}>
           {text}
         </h2>
       );
     } else if (Tag === 'h3') {
       return (
-        <h3 ref={ref} style={style} className={classes}>
+        <h3 ref={elementRef as any} style={style} className={classes}>
           {text}
         </h3>
       );
     } else if (Tag === 'h4') {
       return (
-        <h4 ref={ref} style={style} className={classes}>
+        <h4 ref={elementRef as any} style={style} className={classes}>
           {text}
         </h4>
       );
     } else if (Tag === 'h5') {
       return (
-        <h5 ref={ref} style={style} className={classes}>
+        <h5 ref={elementRef as any} style={style} className={classes}>
           {text}
         </h5>
       );
     } else if (Tag === 'h6') {
       return (
-        <h6 ref={ref} style={style} className={classes}>
+        <h6 ref={elementRef as any} style={style} className={classes}>
           {text}
         </h6>
       );
     } else if (Tag === 'span') {
       return (
-        <span ref={ref} style={style} className={classes}>
+        <span ref={elementRef as any} style={style} className={classes}>
           {text}
         </span>
       );
     } else if (Tag === 'div') {
       return (
-        <div ref={ref} style={style} className={classes}>
+        <div ref={elementRef as any} style={style} className={classes}>
           {text}
         </div>
       );
     } else {
       return (
-        <p ref={ref} style={style} className={classes}>
+        <p ref={elementRef as any} style={style} className={classes}>
           {text}
         </p>
       );
