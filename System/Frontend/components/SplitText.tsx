@@ -23,21 +23,22 @@ interface SplitTextProps {
   showCallback?: boolean;
 }
 
-const SplitText = forwardRef<HTMLElement, SplitTextProps>(({
-  text,
-  className = '',
-  delay = 50,
-  duration = 1.25,
-  ease = 'power3.out',
-  splitType = 'chars',
-  from = { opacity: 0, y: 40 },
-  to = { opacity: 1, y: 0 },
-  threshold = 0.1,
-  rootMargin = '-100px',
-  textAlign = 'center',
-  tag = 'p',
-  onLetterAnimationComplete
-}: SplitTextProps, ref) => {
+const SplitText = forwardRef<HTMLElement, SplitTextProps>((props, ref) => {
+  const {
+    text,
+    className = '',
+    delay = 50,
+    duration = 1.25,
+    ease = 'power3.out',
+    splitType = 'chars',
+    from = { opacity: 0, y: 40 },
+    to = { opacity: 1, y: 0 },
+    threshold = 0.1,
+    rootMargin = '-100px',
+    textAlign = 'center',
+    tag = 'p',
+    onLetterAnimationComplete
+  } = props;
   const internalRef = useRef<HTMLElement>(null);
   const elementRef = (ref as React.RefObject<HTMLElement>) || internalRef;
   const animationCompletedRef = useRef(false);
@@ -234,6 +235,8 @@ const SplitText = forwardRef<HTMLElement, SplitTextProps>(({
     }
   };
   return renderTag();
-};
+});
+
+SplitText.displayName = 'SplitText';
 
 export default SplitText;
