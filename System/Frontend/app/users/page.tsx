@@ -42,6 +42,8 @@ function UsersContent() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [error, setError] = useState('');
+  const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
+  const [suspendingUser, setSuspendingUser] = useState<User | null>(null);
 
   const canEdit = user?.role === 'Admin';
   const canDelete = user?.role === 'Admin';
@@ -85,6 +87,19 @@ function UsersContent() {
   const handleAdd = () => {
     setEditingUser(null);
     setIsDialogOpen(true);
+  };
+
+  const handleSuspendClick = (user: User) => {
+    setSuspendingUser(user);
+    setSuspendDialogOpen(true);
+  };
+
+  const handleSuspendConfirm = () => {
+    if (suspendingUser) {
+      handleSuspend(suspendingUser.userId);
+      setSuspendDialogOpen(false);
+      setSuspendingUser(null);
+    }
   };
 
   const handleEdit = (user: User) => {
@@ -259,27 +274,28 @@ function UsersContent() {
                                 Unsuspend
                               </Button>
                             ) : (
-                              <AlertDialog>
+                              <AlertDialog open={suspendDialogOpen} onOpenChange={setSuspendDialogOpen}>
                                 <AlertDialogTrigger asChild>
                                   <Button
                                     variant="outline"
                                     size="sm"
                                     className="text-orange-600 hover:text-orange-700"
+                                    onClick={() => handleSuspendClick(u)}
                                   >
                                     Suspend
                                   </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
-                                    <AlertDialogTitle>Suspend Member</AlertDialogTitle>
+                                    <AlertDialogTitle>Suspend User</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Are you sure you want to suspend {u.fullName}? This will restrict their access to the makerspace facilities and booking system.
+                                      Are you sure you want to suspend {u.fullName}? This will prevent them from accessing the system.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleSuspend(u.userId)}>
-                                      Suspend Member
+                                    <AlertDialogAction onClick={handleSuspendConfirm}>
+                                      Suspend
                                     </AlertDialogAction>
                                   </AlertDialogFooter>
                                 </AlertDialogContent>
