@@ -53,7 +53,7 @@ export default function AboutPage() {
           
           {/* Introduction Container */}
           <Card 
-            ref={(el) => (sectionRefs.current[0] = el)}
+            ref={(el) => { sectionRefs.current[0] = el; }}
             className="bg-gray-900 border-gray-700"
           >
             <CardHeader>
@@ -71,7 +71,7 @@ export default function AboutPage() {
 
           {/* Mission Container */}
           <Card 
-            ref={(el) => (sectionRefs.current[1] = el)}
+            ref={(el) => { sectionRefs.current[1] = el; }}
             className="bg-gray-900 border-gray-700"
           >
             <CardHeader>
@@ -93,7 +93,7 @@ export default function AboutPage() {
 
           {/* Differentiator Container */}
           <Card 
-            ref={(el) => (sectionRefs.current[2] = el)}
+            ref={(el) => { sectionRefs.current[2] = el; }}
             className="bg-gray-900 border-gray-700"
           >
             <CardHeader>
@@ -119,7 +119,7 @@ export default function AboutPage() {
 
           {/* Community Container */}
           <Card 
-            ref={(el) => (sectionRefs.current[3] = el)}
+            ref={(el) => { sectionRefs.current[3] = el; }}
             className="bg-gray-900 border-gray-700"
           >
             <CardHeader>
