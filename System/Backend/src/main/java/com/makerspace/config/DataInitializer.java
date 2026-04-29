@@ -23,13 +23,20 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Add missing assigned_area column if it doesn't exist
+        // Add missing columns if they don't exist
         try {
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+            
+            // Add assigned_area column
             jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS assigned_area VARCHAR(50)");
             System.out.println("assigned_area column added/verified successfully");
+            
+            // Add status column with default value
+            jdbcTemplate.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'ACTIVE'");
+            System.out.println("status column added/verified successfully");
+            
         } catch (Exception e) {
-            System.err.println("Error adding assigned_area column: " + e.getMessage());
+            System.err.println("Error adding columns: " + e.getMessage());
         }
 
         String email = "ivanboye@gmail.com";
@@ -43,6 +50,7 @@ public class DataInitializer implements CommandLineRunner {
             admin.setStaffType(null);
             admin.setCreatedBy(null);
             admin.setAssignedArea(null);
+            admin.setStatus(User.Status.ACTIVE);
             userRepository.save(admin);
             System.out.println("Admin user created successfully");
         }
