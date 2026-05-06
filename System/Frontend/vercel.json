@@ -1,10 +1,4 @@
 {
-  "version": 2,
-  "name": "makerspace-frontend",
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "installCommand": "npm install",
-  "regions": ["iad1"],
   "headers": [
     {
       "source": "/api/(.*)",
@@ -15,7 +9,7 @@
         },
         {
           "key": "Access-Control-Allow-Methods",
-          "value": "GET,POST,PUT,DELETE,OPTIONS"
+          "value": "GET,POST,PUT,DELETE,OPTIONS,PATCH"
         },
         {
           "key": "Access-Control-Allow-Headers",
