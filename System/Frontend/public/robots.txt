@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-
-# Sitemap location (update with your production domain)
-# Sitemap: https://your-domain.vercel.app/sitemap.xml
