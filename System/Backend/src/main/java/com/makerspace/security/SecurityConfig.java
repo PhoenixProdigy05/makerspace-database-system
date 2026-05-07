@@ -57,10 +57,13 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
             "http://localhost:3000",
-            "http://localhost:3001", 
+            "http://localhost:3001",
             "http://localhost:3002",
             "http://localhost:3003",
-            "http://frontend-dev:3000"
+            "http://frontend-dev:3000",
+            "https://makerspace-database-system.vercel.app",
+            "https://makerspace-database-system-git-main-ivanboye592-8148s-projects.vercel.app",
+            "https://makerspace-database-system-hfsaw1pk1-ivanboye592-8148s-projects.vercel.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
